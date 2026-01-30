@@ -14,68 +14,16 @@ A Home Assistant custom integration that displays what school items each child n
 - **Calendar integration** - view schedules in Home Assistant's calendar
 - **Full UI management** - configure everything through the Home Assistant interface
 
-## Quick Start (Docker Test Environment)
-
-### Prerequisites
-
-- Docker and Docker Compose installed
-- Port 8123 available
-
-### Start the test environment
-
-```bash
-./scripts/start.sh
-```
-
-Wait 30-60 seconds for Home Assistant to start, then open http://localhost:8123
-
-### First-time setup
-
-1. Create an admin account when prompted
-2. Go to **Settings > Devices & Services**
-3. Click **Add Integration**
-4. Search for **School Schedule**
-5. Set the switchover time (default: 12:00 = noon)
-
-### View the dashboard
-
-The test environment includes a pre-configured dashboard with:
-- **Schedule Display** - Shows the visual card
-- **Manage Schedule** - Full management panel
-- **Calendar View** - Calendar entities
-- **Services** - Documentation and examples
-
-### Load test data (optional)
-
-To quickly populate with sample data:
-
-1. Create a long-lived access token:
-   - Click your profile (bottom-left)
-   - Scroll to "Long-Lived Access Tokens"
-   - Create a new token
-
-2. Run the setup script:
-   ```bash
-   export HA_TOKEN='your_token_here'
-   ./scripts/setup-test-data.sh
-   ```
-
-### Stop the environment
-
-```bash
-./scripts/stop.sh
-```
-
 ## Installation
 
 ### HACS (Recommended)
 
-1. Open HACS in your Home Assistant instance
-2. Click the three dots in the top right corner and select **Custom repositories**
-3. Add `https://github.com/davidfindlay/ha-school-schedule` as a custom repository with category **Integration**
-4. Click **Install** on the School Schedule card
-5. Restart Home Assistant
-6. Go to **Settings > Devices & Services > Add Integration** and search for **School Schedule**
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=davidfindlay&repository=ha-school-schedule&category=integration)
+
+1. Click the button above, or manually: open HACS, click the three dots in the top right corner, select **Custom repositories**, and add `https://github.com/davidfindlay/ha-school-schedule` with category **Integration**
+2. Click **Install** on the School Schedule card
+3. Restart Home Assistant
+4. Go to **Settings > Devices & Services > Add Integration** and search for **School Schedule**
 
 ### Manual Installation
 
@@ -232,6 +180,31 @@ Override specific dates when the regular schedule doesn't apply:
 - Special events
 
 ## Development
+
+### Docker Test Environment
+
+Prerequisites: Docker and Docker Compose installed, port 8123 available.
+
+```bash
+./scripts/start.sh    # Start the environment
+./scripts/stop.sh     # Stop the environment
+./scripts/logs.sh     # View logs
+```
+
+Wait 30-60 seconds for Home Assistant to start, then open http://localhost:8123
+
+1. Create an admin account when prompted
+2. Go to **Settings > Devices & Services > Add Integration** and search for **School Schedule**
+3. Set the switchover time (default: 12:00 = noon)
+
+The test environment includes a pre-configured dashboard with the display card, management panel, calendar view, and service examples.
+
+To populate sample data:
+
+```bash
+export HA_TOKEN='your_token_here'
+./scripts/setup-test-data.sh
+```
 
 ### Project structure
 
