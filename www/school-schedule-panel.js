@@ -18,6 +18,7 @@ class SchoolSchedulePanel extends HTMLElement {
     this._userInteracting = false;
     this._pendingUpdate = false;
     this._interactionTimeout = null;
+    this._filePickerOpen = false;
   }
 
   // XSS prevention helpers
@@ -364,6 +365,12 @@ class SchoolSchedulePanel extends HTMLElement {
     root.addEventListener('focusin', () => this._markUserInteracting());
     root.addEventListener('keydown', () => this._markUserInteracting());
     root.addEventListener('mousedown', () => this._markUserInteracting());
+    // Detect file picker cancel (window regains focus without change event)
+    window.addEventListener('focus', () => {
+      if (this._filePickerOpen) {
+        setTimeout(() => { this._filePickerOpen = false; }, 300);
+      }
+    });
   }
 
   _showConfirmModal(title, message, onConfirm) {
@@ -899,8 +906,14 @@ class SchoolSchedulePanel extends HTMLElement {
     const uploadBtn = this.shadowRoot.getElementById('upload-image-btn');
     const fileInput = this.shadowRoot.getElementById('image-file-input');
     if (uploadBtn && fileInput) {
-      uploadBtn.addEventListener('click', () => fileInput.click());
-      fileInput.addEventListener('change', (e) => this._handleImageUpload(e));
+      uploadBtn.addEventListener('click', () => {
+        this._filePickerOpen = true;
+        fileInput.click();
+      });
+      fileInput.addEventListener('change', (e) => {
+        this._filePickerOpen = false;
+        this._handleImageUpload(e);
+      });
     }
 
     // Remove item buttons
@@ -1302,9 +1315,9 @@ class SchoolSchedulePanel extends HTMLElement {
   }
 
   _updateData() {
-    // Defer DOM rebuild while user is interacting to prevent
-    // losing focus, clearing inputs, and disrupting selections
-    if (this._userInteracting) {
+    // Defer DOM rebuild while user is interacting or file picker is open
+    // to prevent losing focus, clearing inputs, and disrupting selections
+    if (this._userInteracting || this._filePickerOpen) {
       this._pendingUpdate = true;
       return;
     }
