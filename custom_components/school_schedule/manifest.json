@@ -3,7 +3,7 @@
   "name": "School Schedule",
   "codeowners": [],
   "config_flow": true,
-  "dependencies": [],
+  "dependencies": ["http"],
   "documentation": "https://github.com/davidfindlay/ha-school-schedule",
   "iot_class": "local_polling",
   "issue_tracker": "https://github.com/davidfindlay/ha-school-schedule/issues",
