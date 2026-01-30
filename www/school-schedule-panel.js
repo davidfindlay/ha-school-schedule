@@ -202,7 +202,7 @@ class SchoolSchedulePanel extends HTMLElement {
         .day-btn:hover { background: var(--secondary-background-color); }
         .day-btn.active {
           background: #03a9f4; color: white;
-          border-color: #03a9f4;
+          border-color: #03a9f4;''
         }
         .checkbox-list { list-style: none; padding: 0; margin: 0; }
         .checkbox-list li {
