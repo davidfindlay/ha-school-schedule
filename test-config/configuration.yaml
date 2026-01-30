@@ -1,0 +1,31 @@
+# Home Assistant Test Configuration for School Schedule Integration
+
+homeassistant:
+  name: School Schedule Test
+  unit_system: metric
+  time_zone: Australia/Sydney
+  country: AU
+
+# Enable default integrations
+default_config:
+
+# Enable the frontend
+frontend:
+
+# Enable configuration UI
+config:
+
+# Lovelace in YAML mode for easier testing
+lovelace:
+  mode: yaml
+  resources:
+    - url: /local/school-schedule-card.js?v=1.0.12
+      type: module
+    - url: /local/school-schedule-panel.js?v=1.0.12
+      type: module
+
+# Enable logging for debugging
+logger:
+  default: info
+  logs:
+    custom_components.school_schedule: debug

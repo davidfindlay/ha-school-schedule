@@ -1,0 +1,169 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "School Schedule Setup",
+        "description": "Configure when the display switches from showing today's items to tomorrow's items.",
+        "data": {
+          "switchover_time": "Switchover Time (24h format)"
+        },
+        "data_description": {
+          "switchover_time": "After this time, the card will show tomorrow's required items instead of today's. Default is 12:00 (noon)."
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "School Schedule is already configured."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "School Schedule Options",
+        "data": {
+          "switchover_time": "Switchover Time"
+        }
+      }
+    }
+  },
+  "services": {
+    "add_child": {
+      "name": "Add Child",
+      "description": "Add a new child to the school schedule.",
+      "fields": {
+        "name": {
+          "name": "Name",
+          "description": "The child's name."
+        }
+      }
+    },
+    "remove_child": {
+      "name": "Remove Child",
+      "description": "Remove a child from the school schedule.",
+      "fields": {
+        "name": {
+          "name": "Name",
+          "description": "The child's name to remove."
+        }
+      }
+    },
+    "add_item": {
+      "name": "Add Item",
+      "description": "Add an item to a child's available items list.",
+      "fields": {
+        "child_name": {
+          "name": "Child Name",
+          "description": "The child to add the item to."
+        },
+        "item_id": {
+          "name": "Item ID",
+          "description": "A unique identifier for this item (e.g., 'formal_uniform')."
+        },
+        "item_name": {
+          "name": "Item Name",
+          "description": "Display name for the item (e.g., 'Formal Uniform')."
+        },
+        "image": {
+          "name": "Image Path",
+          "description": "Path to the item's image (e.g., /local/school/formal.png)."
+        }
+      }
+    },
+    "remove_item": {
+      "name": "Remove Item",
+      "description": "Remove an item from a child.",
+      "fields": {
+        "child_name": {
+          "name": "Child Name",
+          "description": "The child to remove the item from."
+        },
+        "item_id": {
+          "name": "Item ID",
+          "description": "The item's unique identifier."
+        }
+      }
+    },
+    "update_item": {
+      "name": "Update Item",
+      "description": "Update an item's name or image.",
+      "fields": {
+        "child_name": {
+          "name": "Child Name",
+          "description": "The child who owns the item."
+        },
+        "item_id": {
+          "name": "Item ID",
+          "description": "The item's unique identifier."
+        },
+        "item_name": {
+          "name": "New Name",
+          "description": "New display name (optional)."
+        },
+        "image": {
+          "name": "New Image",
+          "description": "New image path (optional)."
+        }
+      }
+    },
+    "set_weekly_schedule": {
+      "name": "Set Weekly Schedule",
+      "description": "Set which items are needed for a specific day of the week.",
+      "fields": {
+        "child_name": {
+          "name": "Child Name",
+          "description": "The child to set the schedule for."
+        },
+        "day": {
+          "name": "Day of Week",
+          "description": "The day to configure (monday, tuesday, etc.)."
+        },
+        "item_ids": {
+          "name": "Item IDs",
+          "description": "List of item IDs needed on this day."
+        }
+      }
+    },
+    "add_exception": {
+      "name": "Add Exception",
+      "description": "Add a schedule exception for a specific date (overrides weekly schedule).",
+      "fields": {
+        "child_name": {
+          "name": "Child Name",
+          "description": "The child to add the exception for."
+        },
+        "date": {
+          "name": "Date",
+          "description": "The date for the exception (YYYY-MM-DD)."
+        },
+        "item_ids": {
+          "name": "Item IDs",
+          "description": "List of item IDs for this date (use empty list for no items needed)."
+        }
+      }
+    },
+    "remove_exception": {
+      "name": "Remove Exception",
+      "description": "Remove a schedule exception, reverting to the weekly schedule.",
+      "fields": {
+        "child_name": {
+          "name": "Child Name",
+          "description": "The child to remove the exception from."
+        },
+        "date": {
+          "name": "Date",
+          "description": "The exception date to remove (YYYY-MM-DD)."
+        }
+      }
+    },
+    "set_switchover_time": {
+      "name": "Set Switchover Time",
+      "description": "Set when the display switches from today to tomorrow.",
+      "fields": {
+        "time": {
+          "name": "Time",
+          "description": "Switchover time in 24-hour format (HH:MM)."
+        }
+      }
+    }
+  }
+}

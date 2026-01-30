@@ -1,0 +1,188 @@
+add_child:
+  name: Add Child
+  description: Add a new child to the school schedule
+  fields:
+    name:
+      name: Name
+      description: The child's name
+      required: true
+      example: "Emma"
+      selector:
+        text:
+
+remove_child:
+  name: Remove Child
+  description: Remove a child from the school schedule
+  fields:
+    name:
+      name: Name
+      description: The child's name
+      required: true
+      example: "Emma"
+      selector:
+        text:
+
+add_item:
+  name: Add Item
+  description: Add an item to a child's available items
+  fields:
+    child_name:
+      name: Child Name
+      description: The child's name
+      required: true
+      example: "Emma"
+      selector:
+        text:
+    item_id:
+      name: Item ID
+      description: Unique identifier for the item
+      required: true
+      example: "formal_uniform"
+      selector:
+        text:
+    item_name:
+      name: Item Name
+      description: Display name for the item
+      required: true
+      example: "Formal Uniform"
+      selector:
+        text:
+    image:
+      name: Image Path
+      description: Path to the item image (e.g., /local/school/formal.png)
+      required: true
+      example: "/local/school/formal.png"
+      selector:
+        text:
+
+remove_item:
+  name: Remove Item
+  description: Remove an item from a child
+  fields:
+    child_name:
+      name: Child Name
+      description: The child's name
+      required: true
+      selector:
+        text:
+    item_id:
+      name: Item ID
+      description: The item's unique identifier
+      required: true
+      selector:
+        text:
+
+update_item:
+  name: Update Item
+  description: Update an item's name or image
+  fields:
+    child_name:
+      name: Child Name
+      description: The child's name
+      required: true
+      selector:
+        text:
+    item_id:
+      name: Item ID
+      description: The item's unique identifier
+      required: true
+      selector:
+        text:
+    item_name:
+      name: New Item Name
+      description: New display name for the item
+      required: false
+      selector:
+        text:
+    image:
+      name: New Image Path
+      description: New path to the item image
+      required: false
+      selector:
+        text:
+
+set_weekly_schedule:
+  name: Set Weekly Schedule
+  description: Set the items needed for a specific day of the week
+  fields:
+    child_name:
+      name: Child Name
+      description: The child's name
+      required: true
+      selector:
+        text:
+    day:
+      name: Day
+      description: Day of the week
+      required: true
+      selector:
+        select:
+          options:
+            - monday
+            - tuesday
+            - wednesday
+            - thursday
+            - friday
+            - saturday
+            - sunday
+    item_ids:
+      name: Item IDs
+      description: List of item IDs needed for this day
+      required: true
+      example: "[\"formal_uniform\", \"library_bag\"]"
+      selector:
+        object:
+
+add_exception:
+  name: Add Exception
+  description: Add an exception for a specific date (overrides weekly schedule)
+  fields:
+    child_name:
+      name: Child Name
+      description: The child's name
+      required: true
+      selector:
+        text:
+    date:
+      name: Date
+      description: Date for the exception (YYYY-MM-DD format)
+      required: true
+      example: "2025-02-14"
+      selector:
+        date:
+    item_ids:
+      name: Item IDs
+      description: List of item IDs for this date (empty list for no items needed)
+      required: true
+      example: "[\"sports_uniform\"]"
+      selector:
+        object:
+
+remove_exception:
+  name: Remove Exception
+  description: Remove an exception for a specific date
+  fields:
+    child_name:
+      name: Child Name
+      description: The child's name
+      required: true
+      selector:
+        text:
+    date:
+      name: Date
+      description: Date of the exception to remove (YYYY-MM-DD format)
+      required: true
+      selector:
+        date:
+
+set_switchover_time:
+  name: Set Switchover Time
+  description: Set the time when the display switches from today to tomorrow
+  fields:
+    time:
+      name: Time
+      description: Switchover time in 24-hour format (HH:MM)
+      required: true
+      example: "12:00"
+      selector:
+        time:

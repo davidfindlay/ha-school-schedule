@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Home Assistant test environment
+test-config/.storage/
+test-config/home-assistant_v2.db
+test-config/home-assistant_v2.db-shm
+test-config/home-assistant_v2.db-wal
+test-config/.cloud/
+test-config/tts/
+test-config/blueprints/
+test-config/deps/
+test-config/backups/
+test-config/.HA_VERSION
+test-config/.ha_run.lock
+test-config/home-assistant.log*
+test-config/themes/
+
+# User-uploaded images (test data)
+www/school-schedule/
+
+# Environment
+.env
+*.log

@@ -1,0 +1,117 @@
+title: School Schedule Test
+
+views:
+  - title: Schedule Display
+    path: display
+    icon: mdi:bag-personal
+    cards:
+      - type: markdown
+        content: |
+          # School Schedule Card
+          This card displays what each child needs to bring to school.
+          The schedule will show **today's items** until the switchover time,
+          then switch to **tomorrow's items**.
+
+      - type: custom:school-schedule-card
+        entity: sensor.school_schedule
+        title: What to Pack Today
+        show_header: true
+        show_date: true
+        show_item_names: true
+        image_size: 100
+
+      - type: markdown
+        content: |
+          ---
+          ### Sensor State
+          Check the sensor attributes to see all data.
+
+      - type: entities
+        title: Schedule Sensor
+        entities:
+          - entity: sensor.school_schedule
+            secondary_info: last-changed
+
+  - title: Manage Schedule
+    path: manage
+    icon: mdi:cog
+    cards:
+      - type: markdown
+        content: |
+          # Schedule Manager
+          Use this panel to:
+          1. **Add Children** - Add your children's names
+          2. **Add Items** - Define uniforms, bags, instruments, etc.
+          3. **Set Weekly Schedule** - Configure what's needed each day
+          4. **Add Exceptions** - Override specific dates (sports days, excursions, etc.)
+
+      - type: custom:school-schedule-panel
+        entity: sensor.school_schedule
+
+  - title: Calendar View
+    path: calendar
+    icon: mdi:calendar
+    cards:
+      - type: markdown
+        content: |
+          # Calendar View
+          Each child has a calendar showing their schedule.
+          Calendar entities are named: `calendar.{child_name}_school_schedule`
+          (e.g., `calendar.emma_school_schedule`, `calendar.oliver_school_schedule`)
+
+      - type: calendar
+        initial_view: dayGridMonth
+        entities:
+          - calendar.liliana_school_schedule
+          - calendar.jasmine_school_schedule
+          - calendar.brianna_school_schedule
+
+  - title: Services
+    path: services
+    icon: mdi:wrench
+    cards:
+      - type: markdown
+        content: |
+          # Available Services
+
+          You can also manage the schedule via Developer Tools > Services:
+
+          - `school_schedule.add_child` - Add a new child
+          - `school_schedule.remove_child` - Remove a child
+          - `school_schedule.add_item` - Add an item to a child
+          - `school_schedule.remove_item` - Remove an item
+          - `school_schedule.update_item` - Update item name/image
+          - `school_schedule.set_weekly_schedule` - Set items for a day
+          - `school_schedule.add_exception` - Add date exception
+          - `school_schedule.remove_exception` - Remove exception
+          - `school_schedule.set_switchover_time` - Change switchover time
+
+          ### Quick Test Commands
+
+          **Add a child:**
+          ```yaml
+          service: school_schedule.add_child
+          data:
+            name: Emma
+          ```
+
+          **Add an item:**
+          ```yaml
+          service: school_schedule.add_item
+          data:
+            child_name: Emma
+            item_id: formal_uniform
+            item_name: Formal Uniform
+            image: /local/test-images/formal.png
+          ```
+
+          **Set Monday schedule:**
+          ```yaml
+          service: school_schedule.set_weekly_schedule
+          data:
+            child_name: Emma
+            day: monday
+            item_ids:
+              - formal_uniform
+              - library_bag
+          ```

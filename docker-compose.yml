@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  homeassistant:
+    container_name: ha-school-schedule-test
+    image: ghcr.io/home-assistant/home-assistant:stable
+    volumes:
+      # Main HA config directory
+      - ./test-config:/config
+      # Mount the custom component directly for live development
+      - ./custom_components/school_schedule:/config/custom_components/school_schedule
+      # Mount the frontend cards
+      - ./www:/config/www
+    environment:
+      - TZ=Australia/Sydney
+    ports:
+      - "8123:8123"
+    restart: unless-stopped
