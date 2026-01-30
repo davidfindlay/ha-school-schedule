@@ -1,7 +1,7 @@
 /**
  * School Schedule Management Panel
  * Provides a full UI for managing children, items, and schedules
- * Version: 1.0.13 - Fix input focus loss during sensor updates
+ * Version: 1.0.13 - Defer DOM updates during user interaction
  */
 
 class SchoolSchedulePanel extends HTMLElement {
@@ -15,6 +15,9 @@ class SchoolSchedulePanel extends HTMLElement {
     this._exceptionItemIds = null; // null = not editing, array = editing
     this._initialized = false;
     this._boundHandlers = new Map();
+    this._userInteracting = false;
+    this._pendingUpdate = false;
+    this._interactionTimeout = null;
   }
 
   // XSS prevention helpers
@@ -341,6 +344,26 @@ class SchoolSchedulePanel extends HTMLElement {
     `;
 
     this._attachEventListeners();
+    this._attachInteractionListeners();
+  }
+
+  _markUserInteracting() {
+    this._userInteracting = true;
+    clearTimeout(this._interactionTimeout);
+    this._interactionTimeout = setTimeout(() => {
+      this._userInteracting = false;
+      if (this._pendingUpdate) {
+        this._pendingUpdate = false;
+        this._updateData();
+      }
+    }, 2000);
+  }
+
+  _attachInteractionListeners() {
+    const root = this.shadowRoot;
+    root.addEventListener('focusin', () => this._markUserInteracting());
+    root.addEventListener('keydown', () => this._markUserInteracting());
+    root.addEventListener('mousedown', () => this._markUserInteracting());
   }
 
   _showConfirmModal(title, message, onConfirm) {
@@ -1279,10 +1302,10 @@ class SchoolSchedulePanel extends HTMLElement {
   }
 
   _updateData() {
-    // Skip DOM rebuild if user is focused on an input field to prevent
-    // losing focus and clearing input values during sensor updates
-    const activeEl = this.shadowRoot.activeElement;
-    if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'SELECT')) {
+    // Defer DOM rebuild while user is interacting to prevent
+    // losing focus, clearing inputs, and disrupting selections
+    if (this._userInteracting) {
+      this._pendingUpdate = true;
       return;
     }
     const contentEl = this.shadowRoot.getElementById('content');
