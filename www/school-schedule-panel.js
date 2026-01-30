@@ -1,7 +1,7 @@
 /**
  * School Schedule Management Panel
  * Provides a full UI for managing children, items, and schedules
- * Version: 1.0.12 - Exceptions tab overhaul with two-table UI
+ * Version: 1.0.13 - Fix input focus loss during sensor updates
  */
 
 class SchoolSchedulePanel extends HTMLElement {
@@ -1279,6 +1279,12 @@ class SchoolSchedulePanel extends HTMLElement {
   }
 
   _updateData() {
+    // Skip DOM rebuild if user is focused on an input field to prevent
+    // losing focus and clearing input values during sensor updates
+    const activeEl = this.shadowRoot.activeElement;
+    if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'SELECT')) {
+      return;
+    }
     const contentEl = this.shadowRoot.getElementById('content');
     if (contentEl) {
       contentEl.innerHTML = this._renderTabContent();
