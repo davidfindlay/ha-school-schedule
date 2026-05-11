@@ -1,0 +1,36 @@
+# Synthetic event traffic for reproducing the "refresh while HA is busy" bug.
+# Loaded via `homeassistant: packages: !include_dir_named packages` in
+# configuration.yaml. To disable, rename this directory and restart HA.
+
+template:
+  # Chatter sensor A: state_changed event every ~3 seconds.
+  - trigger:
+      - platform: time_pattern
+        seconds: "/3"
+    sensor:
+      - name: "Fake Chatter A"
+        unique_id: fake_chatter_a
+        state: "{{ now().timestamp() | int }}"
+
+  # Chatter sensor B: every ~7 seconds, overlapping cadence with A to
+  # surface debounce/race issues.
+  - trigger:
+      - platform: time_pattern
+        seconds: "/7"
+    sensor:
+      - name: "Fake Chatter B"
+        unique_id: fake_chatter_b
+        state: "{{ now().timestamp() | int }}"
+
+automation:
+  # Pure event-bus traffic (no entity state change) every 5 seconds.
+  # Confirms cards don't react to unrelated events on the bus.
+  - alias: "Fake Event Tick"
+    id: fake_event_tick
+    trigger:
+      - platform: time_pattern
+        seconds: "/5"
+    action:
+      - event: school_schedule_test_tick
+        event_data:
+          ts: "{{ now().isoformat() }}"
