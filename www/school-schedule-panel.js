@@ -1,7 +1,7 @@
 /**
  * School Schedule Management Panel
  * Provides a full UI for managing children, items, and schedules
- * Version: 1.0.13 - Defer DOM updates during user interaction
+ * Version: 1.0.14 - Only re-render when our entity actually changed
  */
 
 class SchoolSchedulePanel extends HTMLElement {
@@ -40,13 +40,21 @@ class SchoolSchedulePanel extends HTMLElement {
   }
 
   set hass(hass) {
+    const oldHass = this._hass;
     this._hass = hass;
     if (!this._initialized) {
       this._initialized = true;
       this._render();
-    } else {
-      this._updateData();
+      return;
     }
+    // Only re-render when our entity actually changed. HA pushes a new hass
+    // object on every state_changed event (including unrelated ones); without
+    // this guard the panel rebuilds its DOM on every tick of any chatty entity.
+    const entityId = this._config?.entity || 'sensor.school_schedule';
+    if (oldHass && oldHass.states[entityId] === hass.states[entityId]) {
+      return;
+    }
+    this._updateData();
   }
 
   setConfig(config) {

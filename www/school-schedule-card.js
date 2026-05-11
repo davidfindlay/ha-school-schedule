@@ -33,8 +33,16 @@ class SchoolScheduleCard extends HTMLElement {
   }
 
   set hass(hass) {
+    const oldHass = this._hass;
     this._hass = hass;
-    this._updateContent();
+    if (!this._config) return;
+    const entityId = this._config.entity;
+    // Only re-render when our entity actually changed. HA pushes a new hass
+    // object on every unrelated state_changed event; identity comparison on
+    // the state object is enough because HA creates a new one per change.
+    if (!oldHass || oldHass.states[entityId] !== hass.states[entityId]) {
+      this._updateContent();
+    }
   }
 
   setConfig(config) {
