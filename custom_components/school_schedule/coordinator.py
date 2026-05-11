@@ -131,7 +131,7 @@ class SchoolScheduleCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         self._time_listeners = []
         self._tracked_switchover = None
 
-    async def async_unload(self) -> None:
+    def unload(self) -> None:
         """Tear down listeners when the config entry is unloaded."""
         self._clear_time_listeners()
 
