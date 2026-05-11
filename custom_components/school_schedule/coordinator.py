@@ -4,11 +4,12 @@ from __future__ import annotations
 import asyncio
 import logging
 from datetime import datetime, time, timedelta
-from typing import Any
+from typing import Any, Callable
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError
+from homeassistant.helpers.event import async_track_time_change
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 from homeassistant.util import dt as dt_util
 
@@ -39,6 +40,8 @@ class SchoolScheduleCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         self.store = SchoolScheduleStore(hass, entry.entry_id)
         self._data: dict[str, Any] = {}
         self._lock = asyncio.Lock()
+        self._time_listeners: list[Callable[[], None]] = []
+        self._tracked_switchover: str | None = None
 
     async def _async_update_data(self) -> dict[str, Any]:
         """Fetch data from storage and compute current items."""
@@ -78,7 +81,59 @@ class SchoolScheduleCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                 "exceptions": child.get("exceptions", {}),
             }
 
+        # Refresh time-based listeners if the switchover time changed (or this
+        # is the first run). They fire async_request_refresh at the switchover
+        # boundary and at midnight so display_date / is_tomorrow stay accurate
+        # without waiting up to a minute for the next periodic poll.
+        if switchover_time != self._tracked_switchover:
+            self._setup_time_listeners(switchover_time)
+
         return result
+
+    def _setup_time_listeners(self, switchover_str: str) -> None:
+        """Register time-of-day callbacks for switchover and midnight refresh."""
+        self._clear_time_listeners()
+        switchover = self._get_switchover_time(switchover_str)
+
+        async def _on_boundary(now: datetime) -> None:
+            await self.async_request_refresh()
+
+        self._time_listeners.append(
+            async_track_time_change(
+                self.hass,
+                _on_boundary,
+                hour=switchover.hour,
+                minute=switchover.minute,
+                second=0,
+            )
+        )
+        # Midnight rollover (one second past so the date comparison in
+        # _is_showing_tomorrow has flipped before we recompute).
+        self._time_listeners.append(
+            async_track_time_change(
+                self.hass,
+                _on_boundary,
+                hour=0,
+                minute=0,
+                second=1,
+            )
+        )
+        self._tracked_switchover = switchover_str
+        _LOGGER.debug(
+            "Registered time listeners: switchover=%s, midnight rollover",
+            switchover_str,
+        )
+
+    def _clear_time_listeners(self) -> None:
+        """Remove all registered time-based listeners."""
+        for unsub in self._time_listeners:
+            unsub()
+        self._time_listeners = []
+        self._tracked_switchover = None
+
+    async def async_unload(self) -> None:
+        """Tear down listeners when the config entry is unloaded."""
+        self._clear_time_listeners()
 
     def _get_switchover_time(self, switchover_str: str) -> time:
         """Parse switchover time string to time object."""
