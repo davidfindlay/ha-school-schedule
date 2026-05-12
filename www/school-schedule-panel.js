@@ -1,7 +1,7 @@
 /**
  * School Schedule Management Panel
  * Provides a full UI for managing children, items, and schedules
- * Version: 1.0.14 - Only re-render when our entity actually changed
+ * Version: 1.0.15 - Robust upload auth + clearer upload error handling
  */
 
 class SchoolSchedulePanel extends HTMLElement {
@@ -1122,13 +1122,24 @@ class SchoolSchedulePanel extends HTMLElement {
       const formData = new FormData();
       formData.append('file', file);
 
+      const token = this._hass?.auth?.accessToken
+        || this._hass?.auth?.data?.access_token;
+      if (!token) {
+        throw new Error('No access token available — try reloading the page');
+      }
+
       const response = await fetch('/api/school_schedule/upload', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${this._hass.auth.data.access_token}`
+          'Authorization': `Bearer ${token}`
         },
         body: formData
       });
+
+      if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`HTTP ${response.status}: ${text.slice(0, 200)}`);
+      }
 
       const result = await response.json();
 
